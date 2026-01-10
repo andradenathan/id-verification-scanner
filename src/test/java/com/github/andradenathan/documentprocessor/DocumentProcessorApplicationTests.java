@@ -1,10 +1,10 @@
-package com.github.andradenathan.springbootimageworker;
+package com.github.andradenathan.documentprocessor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpringBootImageWorkerApplicationTests {
+class DocumentProcessorApplicationTests {
 
     @Test
     void contextLoads() {

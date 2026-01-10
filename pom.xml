@@ -6,13 +6,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.0.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.github.andradenathan</groupId>
-    <artifactId>spring-boot-image-worker</artifactId>
+    <artifactId>document-processor-worker</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>spring-boot-image-worker</name>
-    <description>spring-boot-image-worker</description>
+    <name>document-processor-worker</name>
+    <description>document-processor-worker</description>
     <url/>
     <licenses>
         <license/>
