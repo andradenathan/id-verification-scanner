@@ -1,39 +1,39 @@
 package com.github.andradenathan.documentprocessor.domain.document.service;
 
+import com.github.andradenathan.documentprocessor.domain.document.entity.FileType;
 import com.github.andradenathan.documentprocessor.domain.document.responses.ProcessDocumentResponse;
-import java.io.IOException;
-import java.util.ArrayList;
+import com.github.andradenathan.documentprocessor.domain.document.validation.FileTypeResolver;
+import java.io.File;
 import java.util.List;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class DocumentProcessorService {
-  private static final int COLORFUL_DPI = 300;
-  private final MrzProcessorService mrzProcessorService;
+  private static final int DPI = 300;
+
   private final PdfPageSplitterService pdfPageSplitterService;
+  private final MrzProcessorService mrzProcessorService;
 
   public DocumentProcessorService(
-      MrzProcessorService mrzProcessorService, PdfPageSplitterService pdfPageSplitterService) {
-    this.mrzProcessorService = mrzProcessorService;
+      PdfPageSplitterService pdfPageSplitterService, MrzProcessorService mrzProcessorService) {
     this.pdfPageSplitterService = pdfPageSplitterService;
+    this.mrzProcessorService = mrzProcessorService;
   }
 
-  public List<ProcessDocumentResponse> process(List<MultipartFile> documents) throws IOException {
-    if (documents == null || documents.isEmpty()) {
-      return List.of();
-    }
+  public List<ProcessDocumentResponse> process(File file) {
+    FileType type = FileTypeResolver.resolve(file);
 
-    List<MultipartFile> files = new ArrayList<>();
-
-    for (MultipartFile document : documents) {
-      if ("application/pdf".equals(document.getContentType())) {
-        files.addAll(pdfPageSplitterService.splitToImages(document, COLORFUL_DPI));
-      } else {
-        files.add(document);
+    return switch (type) {
+      case PDF -> {
+        try {
+          List<File> pages = pdfPageSplitterService.splitToImages(file, DPI);
+          yield pages.stream().map(mrzProcessorService::process).toList();
+        } catch (Exception exception) {
+          yield List.of(ProcessDocumentResponse.empty());
+        }
       }
-    }
-
-    return files.stream().map(mrzProcessorService::process).toList();
+      case IMAGE -> List.of(mrzProcessorService.process(file));
+      case UNKNOWN -> List.of(ProcessDocumentResponse.empty());
+    };
   }
 }

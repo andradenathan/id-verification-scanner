@@ -7,12 +7,9 @@ import com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjec
 import io.github.hzkitty.RapidOCR;
 import io.github.hzkitty.entity.OcrResult;
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Component
@@ -28,28 +25,19 @@ public class RapidOcrMrzExtractor implements MrzExtractor {
   }
 
   @Override
-  public MrzExtractionResult extract(MultipartFile file) {
-    Objects.requireNonNull(file);
+  public MrzExtractionResult extract(File file) {
+    Objects.requireNonNull(file, "file must not be null");
 
     try {
-      File input = toTempFile(file);
-      File mrzCrop = preprocessor.cropToMrzBand(input);
+      File mrzCrop = preprocessor.cropToMrzBand(file);
 
       OcrResult result = ocr.run(mrzCrop.getAbsolutePath());
       String mrzText = normalizer.normalizeFromOcrResult(result);
 
       return mrzText.isBlank() ? MrzExtractionResult.empty() : new MrzExtractionResult(mrzText);
-    } catch (Exception e) {
-      log.warn("MRZ OCR extraction failed: {}", e.getMessage(), e);
+    } catch (Exception exception) {
+      log.warn("MRZ OCR extraction failed: {}", exception.getMessage(), exception);
       return MrzExtractionResult.empty();
     }
-  }
-
-  private File toTempFile(MultipartFile file) throws Exception {
-    Path path =
-        Files.createTempFile("uploaded-doc-", Objects.toString(file.getOriginalFilename(), "file"));
-    File out = path.toFile();
-    file.transferTo(out);
-    return out;
   }
 }

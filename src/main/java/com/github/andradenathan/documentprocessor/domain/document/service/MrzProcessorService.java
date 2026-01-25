@@ -3,17 +3,16 @@ package com.github.andradenathan.documentprocessor.domain.document.service;
 import com.github.andradenathan.documentprocessor.domain.document.entity.Document;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzExtractor;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzParser;
-import com.github.andradenathan.documentprocessor.domain.document.mrz.impl.MrzDocumentMapper;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjects.MrzData;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjects.MrzExtractionResult;
 import com.github.andradenathan.documentprocessor.domain.document.responses.ProcessDocumentResponse;
 import com.github.andradenathan.documentprocessor.domain.document.validation.DocumentValidationResult;
 import com.github.andradenathan.documentprocessor.domain.document.validation.mrz.MrzTd3Validator;
+import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
@@ -29,7 +28,7 @@ public class MrzProcessorService {
     this.mrzTd3Validator = mrzTd3Validator;
   }
 
-  public ProcessDocumentResponse process(MultipartFile file) {
+  public ProcessDocumentResponse process(File file) {
     try {
       Objects.requireNonNull(file);
 
@@ -41,7 +40,7 @@ public class MrzProcessorService {
 
       DocumentValidationResult validationResult = mrzTd3Validator.validate(mrzDataOptional.get());
 
-      Document document = MrzDocumentMapper.toDocument(mrzDataOptional.get());
+      Document document = MrzData.toDocument(mrzDataOptional.get());
 
       return ProcessDocumentResponse.of(document, validationResult.issues());
     } catch (Exception exception) {

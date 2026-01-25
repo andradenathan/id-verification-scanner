@@ -13,4 +13,8 @@ public record ProcessDocumentResponse(Document document, List<DocumentValidation
   public static ProcessDocumentResponse empty() {
     return new ProcessDocumentResponse(null, List.of());
   }
+
+  public boolean isNotEmpty() {
+    return document != null && !issues.isEmpty();
+  }
 }
