@@ -1,8 +1,8 @@
 package com.github.andradenathan.documentprocessor.domain.document.controller;
 
-import com.github.andradenathan.documentprocessor.domain.document.entity.Document;
+import com.github.andradenathan.documentprocessor.domain.document.responses.ProcessDocumentResponse;
 import com.github.andradenathan.documentprocessor.domain.document.service.DocumentProcessorService;
-import com.github.andradenathan.documentprocessor.infra.http.BaseResponse;
+import com.github.andradenathan.documentprocessor.infrastructure.http.BaseResponse;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.http.MediaType;
@@ -23,7 +23,7 @@ public class DocumentController {
 
   @PostMapping(value = "/process", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<BaseResponse> process(List<MultipartFile> documents) throws IOException {
-    List<Document> processed = documentProcessorService.process(documents);
+    List<ProcessDocumentResponse> processed = documentProcessorService.process(documents);
 
     return ResponseEntity.ok(new BaseResponse(processed, "success"));
   }

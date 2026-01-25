@@ -1,4 +1,4 @@
-package com.github.andradenathan.documentprocessor.infra.http;
+package com.github.andradenathan.documentprocessor.infrastructure.http;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

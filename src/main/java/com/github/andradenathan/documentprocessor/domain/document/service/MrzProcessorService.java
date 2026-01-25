@@ -1,9 +1,14 @@
 package com.github.andradenathan.documentprocessor.domain.document.service;
 
 import com.github.andradenathan.documentprocessor.domain.document.entity.Document;
-import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzExtractionResult;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzExtractor;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzParser;
+import com.github.andradenathan.documentprocessor.domain.document.mrz.impl.MrzDocumentMapper;
+import com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjects.MrzData;
+import com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjects.MrzExtractionResult;
+import com.github.andradenathan.documentprocessor.domain.document.responses.ProcessDocumentResponse;
+import com.github.andradenathan.documentprocessor.domain.document.validation.DocumentValidationResult;
+import com.github.andradenathan.documentprocessor.domain.document.validation.mrz.MrzTd3Validator;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -15,23 +20,33 @@ import org.springframework.web.multipart.MultipartFile;
 public class MrzProcessorService {
   private final MrzExtractor mrzExtractor;
   private final MrzParser mrzParser;
+  private final MrzTd3Validator mrzTd3Validator;
 
-  public MrzProcessorService(MrzExtractor mrzExtractor, MrzParser mrzParser) {
+  public MrzProcessorService(
+      MrzExtractor mrzExtractor, MrzParser mrzParser, MrzTd3Validator mrzTd3Validator) {
     this.mrzExtractor = mrzExtractor;
     this.mrzParser = mrzParser;
+    this.mrzTd3Validator = mrzTd3Validator;
   }
 
-  public Optional<Document> process(MultipartFile file) {
+  public ProcessDocumentResponse process(MultipartFile file) {
     try {
       Objects.requireNonNull(file);
 
       MrzExtractionResult extraction = mrzExtractor.extract(file);
-      if (extraction.mrzText().isBlank()) return Optional.empty();
+      if (extraction.mrzText().isBlank()) return ProcessDocumentResponse.empty();
 
-      return mrzParser.parse(extraction.mrzText());
+      Optional<MrzData> mrzDataOptional = mrzParser.parse(extraction.mrzText());
+      if (mrzDataOptional.isEmpty()) return ProcessDocumentResponse.empty();
+
+      DocumentValidationResult validationResult = mrzTd3Validator.validate(mrzDataOptional.get());
+
+      Document document = MrzDocumentMapper.toDocument(mrzDataOptional.get());
+
+      return ProcessDocumentResponse.of(document, validationResult.issues());
     } catch (Exception exception) {
       log.warn("MRZ processing failed: {}", exception.getMessage(), exception);
-      return Optional.empty();
+      return ProcessDocumentResponse.empty();
     }
   }
 }

@@ -1,9 +1,9 @@
 package com.github.andradenathan.documentprocessor.domain.document.mrz.impl;
 
-import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzExtractionResult;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzExtractor;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzNormalizer;
 import com.github.andradenathan.documentprocessor.domain.document.mrz.MrzPreprocessor;
+import com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjects.MrzExtractionResult;
 import io.github.hzkitty.RapidOCR;
 import io.github.hzkitty.entity.OcrResult;
 import java.io.File;

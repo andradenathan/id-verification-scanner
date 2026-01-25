@@ -1,4 +1,4 @@
-package com.github.andradenathan.documentprocessor.domain.document.mrz;
+package com.github.andradenathan.documentprocessor.domain.document.mrz.valueobjects;
 
 public record MrzExtractionResult(String mrzText) {
   public static MrzExtractionResult empty() {

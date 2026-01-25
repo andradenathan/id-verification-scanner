@@ -1,26 +1,40 @@
 package com.github.andradenathan.documentprocessor.domain.document.entity;
 
+import jakarta.persistence.*;
+import java.time.LocalDate;
 import java.util.UUID;
+import lombok.Getter;
 
+@Getter
+@Entity(name = "documents")
 public class Document {
-  private final UUID id;
-  private final String mrz;
-  private final String name;
-  private final String number;
-  private final String expiryDate;
-  private final String birthDate;
-  private final String type;
-  private final String nationality;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
+
+  private String mrz;
+  private String name;
+  private String number;
+
+  @Column(name = "expiry_date")
+  private LocalDate expiryDate;
+
+  @Column(name = "birth_date")
+  private LocalDate birthDate;
+
+  private String type;
+  private String nationality;
+  private String sex;
 
   public Document(
       String mrz,
       String name,
       String number,
       String type,
-      String birthDate,
-      String expiryDate,
-      String nationality) {
-    this.id = UUID.randomUUID();
+      LocalDate birthDate,
+      LocalDate expiryDate,
+      String nationality,
+      String sex) {
     this.mrz = mrz;
     this.name = name;
     this.number = number;
@@ -28,37 +42,9 @@ public class Document {
     this.birthDate = birthDate;
     this.expiryDate = expiryDate;
     this.nationality = nationality;
+    this.sex = sex;
   }
 
-  public String getNationality() {
-    return nationality;
-  }
-
-  public String getBirthDate() {
-    return birthDate;
-  }
-
-  public String getMrz() {
-    return mrz;
-  }
-
-  public UUID getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getNumber() {
-    return number;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public String getExpiryDate() {
-    return expiryDate;
-  }
+  @Deprecated
+  public Document() {}
 }

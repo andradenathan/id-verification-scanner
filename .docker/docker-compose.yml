@@ -1,6 +1,15 @@
-version: '3.8'
 services:
-  rabbitmq:
+  database:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_USER: nathan
+      POSTGRES_PASSWORD: nathan
+      POSTGRES_DB: document_processor
+      POSTGRES_PORT: 5433
+    ports:
+      - "5433:5432"
+  queue:
     image: rabbitmq:3-management
     container_name: rabbitmq
     ports:

@@ -1,10 +1,9 @@
 package com.github.andradenathan.documentprocessor.domain.document.service;
 
-import com.github.andradenathan.documentprocessor.domain.document.entity.Document;
+import com.github.andradenathan.documentprocessor.domain.document.responses.ProcessDocumentResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +19,7 @@ public class DocumentProcessorService {
     this.pdfPageSplitterService = pdfPageSplitterService;
   }
 
-  public List<Document> process(List<MultipartFile> documents) throws IOException {
+  public List<ProcessDocumentResponse> process(List<MultipartFile> documents) throws IOException {
     if (documents == null || documents.isEmpty()) {
       return List.of();
     }
@@ -35,6 +34,6 @@ public class DocumentProcessorService {
       }
     }
 
-    return files.stream().map(mrzProcessorService::process).flatMap(Optional::stream).toList();
+    return files.stream().map(mrzProcessorService::process).toList();
   }
 }

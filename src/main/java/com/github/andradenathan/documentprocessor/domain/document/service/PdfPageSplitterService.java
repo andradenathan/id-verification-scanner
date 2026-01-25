@@ -1,6 +1,6 @@
 package com.github.andradenathan.documentprocessor.domain.document.service;
 
-import com.github.andradenathan.documentprocessor.infra.http.MultipartFileConverter;
+import com.github.andradenathan.documentprocessor.infrastructure.http.MultipartFileConverter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
